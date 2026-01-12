@@ -104,7 +104,7 @@ export default function signaturePadFormComponent({
                 canvasBackgroundColor,
                 canvasPenColor,
             )
-            this.signaturePad.fromData(restoredData)
+            this.signaturePad.fromData(restoredData, {clear: false})
         },
 
         downloadAs(type, extension) {
