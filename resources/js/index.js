@@ -43,6 +43,11 @@ export default function signaturePadFormComponent({
                 this.signaturePad.off()
             }
 
+            const originalClear = this.signaturePad.clear
+            this.signaturePad.clear = () => {
+                console.log("Clearing")
+                originalClear()
+            }
 
 
             this.watchState()
@@ -55,8 +60,8 @@ export default function signaturePadFormComponent({
                 this.signaturePad.addEventListener(
                     'beginStroke',
                     () => {
-                        console.log("making dirty")
-                        this.dirty = true
+                        console.log("making not dirty")
+                        this.dirty = false
                     },
                     { once: true },
                 )
