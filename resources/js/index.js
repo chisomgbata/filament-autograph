@@ -46,7 +46,7 @@ export default function signaturePadFormComponent({
             const originalClear = this.signaturePad.clear
             this.signaturePad.clear = () => {
                 console.log("Clearing")
-                originalClear()
+                originalClear.call(this.signaturePad)
             }
 
 
@@ -56,15 +56,6 @@ export default function signaturePadFormComponent({
 
             if (state.initialValue) {
                 this.signaturePad.fromDataURL(state.initialValue)
-
-                this.signaturePad.addEventListener(
-                    'beginStroke',
-                    () => {
-                        console.log("making not dirty")
-                        this.dirty = false
-                    },
-                    { once: true },
-                )
             }
         },
 
@@ -98,7 +89,7 @@ export default function signaturePadFormComponent({
                 canvasBackgroundColor,
                 canvasPenColor,
             } = this.prepareToExport()
-            this.signaturePad.fromData(exportedData)
+            this.signaturePad.fromData(exportedData, {clear: false})
 
             this.previousState = this.state
             this.state = this.signaturePad.toDataURL()
