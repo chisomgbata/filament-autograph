@@ -50,6 +50,13 @@ export default function signaturePadFormComponent({
             if (state.initialValue) {
                 this.signaturePad.fromDataURL(state.initialValue)
 
+                this.signaturePad.addEventListener(
+                    'beginStroke',
+                    () => {
+                        console.log('beginStroke')
+                    },
+                    { once: true },
+                )
             }
         },
 
