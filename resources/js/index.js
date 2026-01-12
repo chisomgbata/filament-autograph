@@ -50,10 +50,21 @@ export default function signaturePadFormComponent({
             if (state.initialValue) {
                 this.signaturePad.fromDataURL(state.initialValue)
 
+                const realClear = this.signaturePad.clear.bind(this.signaturePad);
+
+                // 2. Temporarily make .clear() do nothing
+                this.signaturePad.clear = () => {
+                    console.log('Clear attempt blocked');
+                };
+
+                // 3. After the user has started drawing, give the power back
+                // (so the "Clear" button still works)
                 this.signaturePad.addEventListener(
                     'beginStroke',
                     () => {
-                        console.log('beginStroke')
+                        setTimeout(() => {
+                            this.signaturePad.clear = realClear;
+                        }, 100);
                     },
                     { once: true },
                 )
