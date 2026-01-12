@@ -1,23 +1,23 @@
 import SignaturePad from 'signature_pad'
 
 export default function signaturePadFormComponent({
-                                                      backgroundColor,
-                                                      backgroundColorOnDark,
-                                                      confirmable,
-                                                      disabled,
-                                                      dotSize,
-                                                      exportBackgroundColor,
-                                                      exportPenColor,
-                                                      filename,
-                                                      maxWidth,
-                                                      minDistance,
-                                                      minWidth,
-                                                      penColor,
-                                                      penColorOnDark,
-                                                      state,
-                                                      throttle,
-                                                      velocityFilterWeight,
-                                                  }) {
+    backgroundColor,
+    backgroundColorOnDark,
+    confirmable,
+    disabled,
+    dotSize,
+    exportBackgroundColor,
+    exportPenColor,
+    filename,
+    maxWidth,
+    minDistance,
+    minWidth,
+    penColor,
+    penColorOnDark,
+    state,
+    throttle,
+    velocityFilterWeight,
+}) {
     return {
         state,
         previousState: state,
@@ -43,16 +43,21 @@ export default function signaturePadFormComponent({
                 this.signaturePad.off()
             }
 
+
+
             this.watchState()
             this.watchResize()
             this.watchTheme()
 
-            // <--- CHANGED: ONLY LOAD DATA, DO NOT ADD THE "CLEAR" LISTENER
             if (state.initialValue) {
                 this.signaturePad.fromDataURL(state.initialValue)
 
-                // I have deleted the 'beginStroke' listener block here.
-                // Now, when you draw on an existing signature, it just adds ink.
+                this.signaturePad.addEventListener(
+                    'beginStroke',
+                    () => {
+                    },
+                    { once: true },
+                )
             }
         },
 
@@ -150,9 +155,8 @@ export default function signaturePadFormComponent({
         },
 
         watchResize() {
-            window.addEventListener('resize', () => this.resizeCanvas())
-            // Note: The original code passed the function reference, which broke "this" context sometimes.
-            // I changed it to an arrow function or ensure bind, but the listener above is fine.
+            window.addEventListener('resize', () => this.resizeCanvas)
+            this.resizeCanvas()
         },
 
         /**
@@ -161,23 +165,10 @@ export default function signaturePadFormComponent({
         resizeCanvas() {
             const ratio = Math.max(window.devicePixelRatio || 1, 1)
 
-            // <--- CHANGED: SAVE DATA BEFORE RESIZING
-            // If we don't save this, resizing the window (or rotating phone) wipes the signature
-            const data = this.signaturePad ? this.signaturePad.toData() : []
-
             this.$refs.canvas.width = this.$refs.canvas.offsetWidth * ratio
             this.$refs.canvas.height = this.$refs.canvas.offsetHeight * ratio
             this.$refs.canvas.getContext('2d').scale(ratio, ratio)
-
             this.signaturePad.clear()
-
-            // <--- CHANGED: RESTORE DATA AFTER RESIZING
-            if (data.length > 0) {
-                this.signaturePad.fromData(data)
-            } else if (this.state && this.state.initialValue) {
-                // Fallback to initial value if we haven't drawn anything yet but resized immediately
-                this.signaturePad.fromDataURL(this.state.initialValue)
-            }
         },
 
         watchTheme() {
