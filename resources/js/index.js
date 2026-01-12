@@ -55,6 +55,8 @@ export default function signaturePadFormComponent({
                 this.signaturePad.addEventListener(
                     'beginStroke',
                     () => {
+                        console.log("making dirty")
+                        this.dirty = true
                     },
                     { once: true },
                 )
